@@ -1,23 +1,25 @@
 library(RTextTools)
 library(e1071)
 
+setwd('GitHub/Social-Media-Series/')
+
 #input data train
 positif = readLines("train/posTr.csv")
 negatif = readLines("train/negTr.csv")
-hvz.tr = c(positif, negatif)
-length(hvz.tr)
-str(hvz.tr)
+data.tr = c(positif, negatif)
+length(data.tr)
+str(data.tr)
 
 #input data test
-positiftes = readLines("train/posTr.csv")
-negatiftes = readLines("train/negTs.csv")
-hvz.ts = c(positiftes, negatiftes)
-length(hvz.ts)
+positiftes = readLines("test/posTs.csv")
+negatiftes = readLines("test/negTs.csv")
+data.ts = c(positiftes, negatiftes)
+length(data.ts)
 
 #menyatukan data
-hvz.all = c(hvz.tr,hvz.ts)
-length(hvz.all)
-str(hvz.all)
+data.all = c(data.tr,data.ts)
+length(data.all)
+str(data.all)
 
 
 #### memberi label sepanjang variabel positif dan negatif
@@ -32,18 +34,18 @@ length(sentiment_all)
 
 
 ## membuat matriks document terms
-mat = create_matrix(hvz.all, removeStopwords = FALSE, 
+mat = create_matrix(data.all, removeStopwords = FALSE, 
                     removeNumbers = TRUE, stemWords = FALSE, tm::weightTfIdf)
 mat = as.matrix(mat)
 #View(mat)
 
 #melihat panjang data
-n=length(hvz.all)
+n=length(data.all)
 n-100
 
 
 ## membuat container text
-container <- create_container(mat, sentiment_all, trainSize=1:599,testSize= 600:n, virgin=FALSE)
+container <- create_container(mat, sentiment_all, trainSize=1:383,testSize= 384:n, virgin=FALSE)
 
 ## train model
 model.svm <- train_model(container, 'SVM',kernel='linear')
@@ -71,5 +73,5 @@ recall_accuracy(sentiment_all[600:n], results.dt[,1])
 recall_accuracy(sentiment_all[600:n], results.ba[,1])
 recall_accuracy(sentiment_all[600:n], results.maxent[,1])
 
-c(results.svm[2,1],hvz.all[600])
+c(results.svm[2,1],data.all[600])
 results.maxent[2,1]
